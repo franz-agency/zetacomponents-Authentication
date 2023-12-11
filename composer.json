@@ -42,7 +42,8 @@
     "name": "zetacomponents/authentication",
     "type": "library",
     "require": {
-        "zetacomponents/base": "~1.8"
+        "zetacomponents/base": "~1.8",
+        "php": "^8.2"
     },
     "require-dev": {
         "zetacomponents/unit-test": "*"
