@@ -61,7 +61,7 @@ class ezcAuthenticationHtpasswdOptions extends ezcAuthenticationFilterOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options Options for this class
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->plain = false;
 

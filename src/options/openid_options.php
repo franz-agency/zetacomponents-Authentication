@@ -105,7 +105,7 @@ class ezcAuthenticationOpenidOptions extends ezcAuthenticationFilterOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options Options for this class
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->mode = ezcAuthenticationOpenidFilter::MODE_DUMB; // stateless mode
         $this->store = null;
@@ -114,7 +114,7 @@ class ezcAuthenticationOpenidOptions extends ezcAuthenticationFilterOptions
         $this->nonceValidity = 24 * 60 * 60; // seconds
         $this->timeout = 3; // seconds
         $this->timeoutOpen = 3; // seconds
-        $this->requestSource = ( $_GET !== null ) ? $_GET : array();
+        $this->requestSource = $_GET ?? [];
         $this->immediate = false;
         $this->returnUrl = null; // default = return to the currently called URL
         $this->openidVersion = ezcAuthenticationOpenidFilter::VERSION_1_1;
@@ -138,10 +138,7 @@ class ezcAuthenticationOpenidOptions extends ezcAuthenticationFilterOptions
         switch ( $name )
         {
             case 'mode':
-                $allowedValues = array(
-                                        ezcAuthenticationOpenidFilter::MODE_DUMB,
-                                        ezcAuthenticationOpenidFilter::MODE_SMART
-                                      );
+                $allowedValues = [ezcAuthenticationOpenidFilter::MODE_DUMB, ezcAuthenticationOpenidFilter::MODE_SMART];
                 if ( !in_array( $value, $allowedValues, true ) )
                 {
                     throw new ezcBaseValueException( $name, $value, implode( ', ', $allowedValues ) );

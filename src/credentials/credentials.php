@@ -31,7 +31,7 @@
  * @package Authentication
  * @version //autogen//
  */
-abstract class ezcAuthenticationCredentials extends ezcBaseStruct
+abstract class ezcAuthenticationCredentials extends ezcBaseStruct implements \Stringable
 {
     /**
      * Returns string representation of the credentials.
@@ -40,6 +40,6 @@ abstract class ezcAuthenticationCredentials extends ezcBaseStruct
      * 
      * @return string
      */
-    abstract public function __toString();
+    abstract public function __toString(): string;
 }
 ?>

@@ -66,7 +66,7 @@ class ezcAuthenticationGroupOptions extends ezcAuthenticationFilterOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options Options for this class
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->mode = ezcAuthenticationGroupFilter::MODE_OR;
         $this->multipleCredentials = false;
@@ -90,10 +90,7 @@ class ezcAuthenticationGroupOptions extends ezcAuthenticationFilterOptions
         switch ( $name )
         {
             case 'mode':
-                $modes = array(
-                                ezcAuthenticationGroupFilter::MODE_OR,
-                                ezcAuthenticationGroupFilter::MODE_AND
-                              );
+                $modes = [ezcAuthenticationGroupFilter::MODE_OR, ezcAuthenticationGroupFilter::MODE_AND];
                 if ( !in_array( $value, $modes, true ) )
                 {
                     throw new ezcBaseValueException( $name, $value, implode( ', ', $modes ) );

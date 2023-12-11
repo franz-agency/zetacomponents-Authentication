@@ -62,7 +62,7 @@ class ezcAuthenticationLdapOptions extends ezcAuthenticationFilterOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options Options for this class
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->protocol = ezcAuthenticationLdapFilter::PROTOCOL_PLAIN;
 
@@ -85,10 +85,7 @@ class ezcAuthenticationLdapOptions extends ezcAuthenticationFilterOptions
         switch ( $name )
         {
             case 'protocol':
-                $allowedValues = array(
-                                        ezcAuthenticationLdapFilter::PROTOCOL_PLAIN,
-                                        ezcAuthenticationLdapFilter::PROTOCOL_TLS
-                                      );
+                $allowedValues = [ezcAuthenticationLdapFilter::PROTOCOL_PLAIN, ezcAuthenticationLdapFilter::PROTOCOL_TLS];
                 if ( !in_array( $value, $allowedValues, true ) )
                 {
                     throw new ezcBaseValueException( $name, $value, implode( ', ', $allowedValues ) );

@@ -152,9 +152,9 @@ class ezcAuthenticationBcmathLibrary extends ezcAuthenticationBignumLibrary
         if ( (int)$r[2] === 1 )
         {
             $a = $r[0];
-            while ( bccomp( $a, 0 ) < 0 )
+            while ( bccomp( (string) $a, 0 ) < 0 )
             {
-                $a = bcadd( $a, $modulus );
+                $a = bcadd( (string) $a, $modulus );
             }
             return $a;
         }
@@ -199,7 +199,7 @@ class ezcAuthenticationBcmathLibrary extends ezcAuthenticationBignumLibrary
             $yLast = $temp;
 
         }
-        return array( $xLast, $yLast, $a );
+        return [$xLast, $yLast, $a];
     }
 
     /**

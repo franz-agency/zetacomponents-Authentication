@@ -80,11 +80,11 @@ class ezcAuthenticationTypekeyOptions extends ezcAuthenticationFilterOptions
      *         if the $value file cannot be opened for reading
      * @param array(string=>mixed) $options Options for this class
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->validity = 0; // seconds
         $this->keysFile = 'http://www.typekey.com/extras/regkeys.txt';
-        $this->requestSource = ( $_GET !== null ) ? $_GET : array();
+        $this->requestSource = $_GET ?? [];
 
         parent::__construct( $options );
     }
@@ -122,7 +122,7 @@ class ezcAuthenticationTypekeyOptions extends ezcAuthenticationFilterOptions
                     throw new ezcBaseValueException( $name, $value, 'string' );
                 }
 
-                if ( strpos( $value, '://' ) === false )
+                if ( !str_contains( $value, '://' ) )
                 {
                     // if $value is not an URL
                     if ( !file_exists( $value ) )
@@ -144,7 +144,7 @@ class ezcAuthenticationTypekeyOptions extends ezcAuthenticationFilterOptions
                     $headers = @get_headers( $value );
                     if ( $headers === false
                          || count( $headers ) === 0 // get_headers returns an empty array for unreachable hosts
-                         || strpos( $headers[0], '404 Not Found' ) !== false
+                         || str_contains( (string) $headers[0], '404 Not Found' )
                        )
                     {
                         throw new ezcBaseFileNotFoundException( $value );

@@ -210,17 +210,17 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
     /**
      * The request does not contain the needed information (like $_GET['sig']).
      */
-    const STATUS_SIGNATURE_MISSING = 1;
+    final public const STATUS_SIGNATURE_MISSING = 1;
 
     /**
      * Signature verification was incorect.
      */
-    const STATUS_SIGNATURE_INCORRECT = 2;
+    final public const STATUS_SIGNATURE_INCORRECT = 2;
 
     /**
      * Login is outside of the timeframe.
      */
-    const STATUS_SIGNATURE_EXPIRED = 3;
+    final public const STATUS_SIGNATURE_EXPIRED = 3;
 
     /**
      * Holds the extra data fetched during the authentication process.
@@ -239,14 +239,14 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
      *
      * @var array(string=>mixed)
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Holds the properties of this class.
      *
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private array $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -257,7 +257,7 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
      */
     public function __construct( ezcAuthenticationTypekeyOptions $options = null )
     {
-        $this->options = ( $options === null ) ? new ezcAuthenticationTypekeyOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationTypekeyOptions();
         $this->lib = ezcAuthenticationMath::createBignumLibrary();
     }
 
@@ -272,7 +272,7 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -303,14 +303,10 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'lib':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'lib' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -322,14 +318,10 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'lib':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'lib' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**
@@ -346,18 +338,18 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
         if ( isset( $source['name'] ) && isset( $source['email'] ) && isset( $source['nick'] ) && isset( $source['ts'] ) && isset( $source['sig'] ) )
         {
             // parse the response URL sent by the TypeKey server
-            $id = isset( $source['name'] ) ? $source['name'] : null;
-            $mail = isset( $source['email'] ) ? $source['email'] : null;
-            $nick = isset( $source['nick'] ) ? $source['nick'] : null;
-            $timestamp = isset( $source['ts'] ) ? $source['ts'] : null;
-            $signature = isset( $source['sig'] ) ? $source['sig'] : null;
+            $id = $source['name'] ?? null;
+            $mail = $source['email'] ?? null;
+            $nick = $source['nick'] ?? null;
+            $timestamp = $source['ts'] ?? null;
+            $signature = $source['sig'] ?? null;
 
             // extra data which will be returned by fetchData()
-            $this->data['name'] = array( $id );
-            $this->data['nick'] = array( $nick );
-            if ( strpos( $mail, '@' ) !== false )
+            $this->data['name'] = [$id];
+            $this->data['nick'] = [$nick];
+            if ( str_contains( (string) $mail, '@' ) )
             {
-                $this->data['email'] = array( $mail );
+                $this->data['email'] = [$mail];
             }
         }
         else
@@ -372,8 +364,8 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
         }
         $keys = $this->fetchPublicKeys( $this->options->keysFile );
         $msg = "{$mail}::{$id}::{$nick}::{$timestamp}";
-        $signature = rawurldecode( urlencode( $signature ) );
-        list( $r, $s ) = explode( ':', $signature );
+        $signature = rawurldecode( urlencode( (string) $signature ) );
+        [$r, $s] = explode( ':', $signature );
         if ( $this->checkSignature( $msg, $r, $s, $keys ) )
         {
             return self::STATUS_OK;
@@ -472,7 +464,7 @@ class ezcAuthenticationTypekeyFilter extends ezcAuthenticationFilter implements 
      *
      * @param array(string) $data A list of attributes to fetch during authentication
      */
-    public function registerFetchData( array $data = array() )
+    public function registerFetchData( array $data = [] )
     {
         // does not need to do anything because all the extra data is returned by default
     }

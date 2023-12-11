@@ -82,19 +82,19 @@ class ezcAuthenticationHtpasswdFilter extends ezcAuthenticationFilter
     /**
      * Username is not found in the htpasswd file.
      */
-    const STATUS_USERNAME_INCORRECT = 1;
+    final public const STATUS_USERNAME_INCORRECT = 1;
 
     /**
      * Password is incorrect.
      */
-    const STATUS_PASSWORD_INCORRECT = 2;
+    final public const STATUS_PASSWORD_INCORRECT = 2;
 
     /**
      * Holds the properties of this class.
      *
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private array $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -111,7 +111,7 @@ class ezcAuthenticationHtpasswdFilter extends ezcAuthenticationFilter
     public function __construct( $file, ezcAuthenticationHtpasswdOptions $options = null )
     {
         $this->file = $file;
-        $this->options = ( $options === null ) ? new ezcAuthenticationHtpasswdOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationHtpasswdOptions();
     }
 
     /**
@@ -129,7 +129,7 @@ class ezcAuthenticationHtpasswdFilter extends ezcAuthenticationFilter
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -168,14 +168,10 @@ class ezcAuthenticationHtpasswdFilter extends ezcAuthenticationFilter
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'file':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'file' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -187,14 +183,10 @@ class ezcAuthenticationHtpasswdFilter extends ezcAuthenticationFilter
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'file':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'file' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**
@@ -220,12 +212,12 @@ class ezcAuthenticationHtpasswdFilter extends ezcAuthenticationFilter
         {
             $parts = explode( ':', $line );
             $hashFromFile = trim( $parts[1] );
-            if ( substr( $hashFromFile, 0, 6 ) === '$apr1$' )
+            if ( str_starts_with($hashFromFile, '$apr1$') )
             {
                 $password = ( $this->options->plain ) ? ezcAuthenticationMath::apr1( $credentials->password, $hashFromFile ) :
                                                         '$apr1$' . $credentials->password;
             }
-            elseif ( substr( $hashFromFile, 0, 5 ) === '{SHA}' )
+            elseif ( str_starts_with($hashFromFile, '{SHA}') )
             {
                 $password = ( $this->options->plain ) ? '{SHA}' . base64_encode( pack( 'H40', sha1( $credentials->password ) ) ) :
                                                         '{SHA}' . $credentials->password;

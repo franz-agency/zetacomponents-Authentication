@@ -46,7 +46,7 @@ class ezcAuthenticationUrl
     public static function normalize( $url )
     {
         $url = trim( $url );
-        if ( strpos( $url, '://' ) === false )
+        if ( !str_contains( $url, '://' ) )
         {
             $url = 'http://' . $url;
         }
@@ -87,7 +87,7 @@ class ezcAuthenticationUrl
         if ( isset( $parts['query'] ) )
         {
             $parts['query'] = self::parseQueryString( $parts['query'] );
-            return ( isset( $parts['query'][$key] ) ) ? $parts['query'][$key] : null;
+            return $parts['query'][$key] ?? null;
         }
         return null;
     }
@@ -104,7 +104,7 @@ class ezcAuthenticationUrl
      */
     public static function buildUrl( array $parts )
     {
-        $path = ( isset( $parts['path'] ) ) ? $parts['path'] : '/';
+        $path = $parts['path'] ?? '/';
         $query = ( isset( $parts['query'] ) ) ? '?' . http_build_query( $parts['query'] ) : '';
         $fragment = ( isset( $parts['fragment'] ) ) ? '#' . $parts['fragment'] : '';
 
@@ -154,11 +154,11 @@ class ezcAuthenticationUrl
      */
     public static function parseQueryString( $str )
     {
-        $result = array();
+        $result = [];
 
         // $params will be returned, but first we have to ensure that the dots
         // are not converted to underscores
-        parse_str( $str, $params );
+        parse_str( (string) $str, $params );
 
         $separator = ini_get( 'arg_separator.input' );
         if ( empty( $separator ) )
@@ -167,7 +167,7 @@ class ezcAuthenticationUrl
         }
 
         // go through $params and ensure that the dots are not converted to underscores
-        $args = explode( $separator, $str );
+        $args = explode( $separator, (string) $str );
         foreach ( $args as $arg )
         {
             $parts = explode( '=', $arg, 2 );
@@ -186,12 +186,12 @@ class ezcAuthenticationUrl
             }
 
             $paramKey = str_replace( '.', '_', $key );
-            if ( isset( $params[$paramKey] ) && strpos( $paramKey, '_' ) !== false )
+            if ( isset( $params[$paramKey] ) && str_contains( $paramKey, '_' ) )
             {
                 $newKey = '';
                 for ( $i = 0; $i < strlen( $paramKey ); $i++ )
                 {
-                    $newKey .= ( $paramKey{$i} === '_' && $key{$i} === '.' ) ? '.' : $paramKey{$i};
+                    $newKey .= ( $paramKey[$i] === '_' && $key[$i] === '.' ) ? '.' : $paramKey[$i];
                 }
 
                 $keys = array_keys( $params );
@@ -219,12 +219,8 @@ class ezcAuthenticationUrl
      */
     public static function getUrl( $url, $method = 'GET', $type = 'text/html' )
     {
-        $opts = array( 'http' =>
-            array(
-                'method'  => $method,
-                'header'  => "Accept: {$type}"
-            )
-        );
+        $opts = ['http' =>
+            ['method'  => $method, 'header'  => "Accept: {$type}"]];
 
         $context  = stream_context_create( $opts );
 

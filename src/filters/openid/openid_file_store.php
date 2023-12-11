@@ -55,7 +55,7 @@ class ezcAuthenticationOpenidFileStore extends ezcAuthenticationOpenidStore
      *
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private array $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -70,7 +70,7 @@ class ezcAuthenticationOpenidFileStore extends ezcAuthenticationOpenidStore
     public function __construct( $path, ezcAuthenticationOpenidFileStoreOptions $options = null )
     {
         $this->path = $path;
-        $this->options = ( $options === null ) ? new ezcAuthenticationOpenidFileStoreOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationOpenidFileStoreOptions();
     }
 
     /**
@@ -88,7 +88,7 @@ class ezcAuthenticationOpenidFileStore extends ezcAuthenticationOpenidStore
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -132,14 +132,10 @@ class ezcAuthenticationOpenidFileStore extends ezcAuthenticationOpenidStore
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'path':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'path' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -151,14 +147,10 @@ class ezcAuthenticationOpenidFileStore extends ezcAuthenticationOpenidStore
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'path':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'path' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**

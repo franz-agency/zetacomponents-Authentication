@@ -34,53 +34,6 @@
 class ezcAuthenticationLdapInfo extends ezcBaseStruct
 {
     /**
-     * The hostname of the LDAP server, for example 'localhost'.
-     *
-     * @var string
-     */
-    public $host;
-
-    /**
-     * The format of the directory entry, for example 'uid=%id'. %id% is a
-     * placeholder name which will be replaced by the actual value.
-     *
-     * @var string
-     */
-    public $format;
-
-    /**
-     * The base of the directory entry, for example 'dc=example,dc=com'.
-     *
-     * @var string
-     */
-    public $base;
-
-    /**
-     * Port to connect to $host.
-     *
-     * Default is 389 for plain connection.
-     * The port is 636 if using SSL (not implemented yet).
-     *
-     * The port is not usable if $host is specified as an uri, for example
-     * 'ldap://localhost'.
-     *
-     * @var int
-     */
-    public $port;
-
-    /**
-     * Protocol to use to connect to LDAP.
-     *
-     * One of these values:
-     *  - ezcAuthenticationLdapFilter::PROTOCOL_PLAIN (default)
-     *  - ezcAuthenticationLdapFilter::PROTOCOL_TLS
-     *
-     * @var int
-     * @apichange Remove this as it is used already as an option
-     */
-    public $protocol;
-
-    /**
      * Constructs a new ezcAuthenticationLdapInfo object.
      *
      * @param string $host Hostname of the LDAP server
@@ -89,13 +42,46 @@ class ezcAuthenticationLdapInfo extends ezcBaseStruct
      * @param int $port The port to connect to $host
      * @param int $protocol The protocol to use to connect to $host
      */
-    public function __construct( $host, $format, $base, $port = 389, $protocol = ezcAuthenticationLdapFilter::PROTOCOL_PLAIN )
+    public function __construct(
+        /**
+         * The hostname of the LDAP server, for example 'localhost'.
+         *
+         */
+        public $host,
+        /**
+         * The format of the directory entry, for example 'uid=%id'. %id% is a
+         * placeholder name which will be replaced by the actual value.
+         *
+         */
+        public $format,
+        /**
+         * The base of the directory entry, for example 'dc=example,dc=com'.
+         *
+         */
+        public $base,
+        /**
+         * Port to connect to $host.
+         *
+         * Default is 389 for plain connection.
+         * The port is 636 if using SSL (not implemented yet).
+         *
+         * The port is not usable if $host is specified as an uri, for example
+         * 'ldap://localhost'.
+         *
+         */
+        public $port = 389,
+        /**
+         * Protocol to use to connect to LDAP.
+         *
+         * One of these values:
+         *  - ezcAuthenticationLdapFilter::PROTOCOL_PLAIN (default)
+         *  - ezcAuthenticationLdapFilter::PROTOCOL_TLS
+         *
+         * @apichange Remove this as it is used already as an option
+         */
+        public $protocol = ezcAuthenticationLdapFilter::PROTOCOL_PLAIN
+    )
     {
-        $this->host = $host;
-        $this->format = $format;
-        $this->base = $base;
-        $this->port = $port;
-        $this->protocol = $protocol;
     }
 
     /**

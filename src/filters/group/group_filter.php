@@ -156,31 +156,31 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
      * All or some of the filters in the group failed (depeding on the mode
      * option).
      */
-    const STATUS_GROUP_FAILED = 1;
+    final public const STATUS_GROUP_FAILED = 1;
 
     /**
      * At least one filter needs to succeed in order for the group to succeed.
      */
-    const MODE_OR = 1;
+    final public const MODE_OR = 1;
 
     /**
      * All the filters need to succeed in order for the group to succeed.
      */
-    const MODE_AND = 2;
+    final public const MODE_AND = 2;
 
     /**
      * Authentication filters.
      * 
      * @var array(ezcAuthenticationFilter)
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
      * The properties of this class.
      * 
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private array $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -217,7 +217,7 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
      */
     public function __construct( array $filters, ezcAuthenticationGroupOptions $options = null )
     {
-        $this->options = ( $options === null ) ? new ezcAuthenticationGroupOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationGroupOptions();
 
         foreach ( $filters as $filter )
         {
@@ -252,7 +252,7 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -283,14 +283,10 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'status':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'status' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -302,14 +298,10 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'status':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'status' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**
@@ -336,7 +328,7 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
                                                                                   $credentials;
 
                 $code = $filter[0]->run( $credentials );
-                $this->status->append( get_class( $filter[0] ), $code );
+                $this->status->append( $filter[0]::class, $code );
                 if ( $code === self::STATUS_OK )
                 {
                     $success = true;
@@ -353,7 +345,7 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
                                                                                   $credentials;
 
                 $code = $filter[0]->run( $credentials );
-                $this->status->append( get_class( $filter[0] ), $code );
+                $this->status->append( $filter[0]::class, $code );
                 if ( $code !== self::STATUS_OK )
                 {
                     $success = false;
@@ -408,11 +400,11 @@ class ezcAuthenticationGroupFilter extends ezcAuthenticationFilter
                 throw new ezcAuthenticationGroupException( 'A credentials object must be specified for each filter when the multipleCredentials option is enabled.' );
             }
 
-            $this->filters[] = array( $filter, $credentials );
+            $this->filters[] = [$filter, $credentials];
         }
         else
         {
-            $this->filters[] = array( $filter );
+            $this->filters[] = [$filter];
         }
     }
 }

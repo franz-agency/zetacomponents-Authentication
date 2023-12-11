@@ -161,14 +161,14 @@ abstract class ezcAuthenticationBignumLibrary
      * @param mixed $bin Binary value
      * @return string
      */
-    public function binToDec( $bin )
+    public function binToDec( mixed $bin )
     {
         $dec = $this->init( 0 );
-        while ( strlen( $bin ) )
+        while ( strlen( (string) $bin ) )
         {
-            $i = ord( substr( $bin, 0, 1 ) );
+            $i = ord( substr( (string) $bin, 0, 1 ) );
             $dec = $this->add( $this->mul( $dec, 256 ), $i );
-            $bin = substr( $bin, 1 );
+            $bin = substr( (string) $bin, 1 );
         }
         return $this->toString( $dec );
     }
@@ -179,14 +179,14 @@ abstract class ezcAuthenticationBignumLibrary
      * @param mixed $hex Hexadecimal value
      * @return string
      */
-    public function hexToDec( $hex )
+    public function hexToDec( mixed $hex )
     {
         $dec = $this->init( 0 );
-        while ( strlen( $hex ) )
+        while ( strlen( (string) $hex ) )
         {
-            $i = hexdec( substr( $hex, 0, 4 ) );
+            $i = hexdec( substr( (string) $hex, 0, 4 ) );
             $dec = $this->add( $this->mul( $dec, 65536 ), $i );
-            $hex = substr( $hex, 4 );
+            $hex = substr( (string) $hex, 4 );
         }
         return $this->toString( $dec );
     }
@@ -197,7 +197,7 @@ abstract class ezcAuthenticationBignumLibrary
      * @param mixed $number The number to convert
      * @return mixed
      */
-    public function btwoc( $number )
+    public function btwoc( mixed $number )
     {
         $cmp = $this->cmp( $number, 0 );
         if ( $cmp < 0 )
@@ -209,7 +209,7 @@ abstract class ezcAuthenticationBignumLibrary
             return "\x00";
         }
 
-        $bytes = array();
+        $bytes = [];
         while ( $this->cmp( $number, 0 ) > 0 )
         {
             array_unshift( $bytes, $this->mod( $number, 256 ) );
@@ -236,9 +236,9 @@ abstract class ezcAuthenticationBignumLibrary
      * @param mixed $stop The top limit of the random number
      * @return mixed
      */
-    public function rand( $stop )
+    public function rand( mixed $stop )
     {
-        $num_bytes = strlen( $this->btwoc( $stop ) );
+        $num_bytes = strlen( (string) $this->btwoc( $stop ) );
         $bytes = '';
         for ( $i = 0; $i < $num_bytes; $i += 4 )
         {

@@ -92,14 +92,14 @@ class ezcAuthenticationTokenFilter extends ezcAuthenticationFilter
     /**
      * Token is not the same as the provided one.
      */
-    const STATUS_TOKEN_INCORRECT = 1;
+    final public const STATUS_TOKEN_INCORRECT = 1;
 
     /**
      * Holds the properties of this class.
      *
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -112,7 +112,7 @@ class ezcAuthenticationTokenFilter extends ezcAuthenticationFilter
     {
         $this->token = $token;
         $this->function = $function;
-        $this->options = ( $options === null ) ? new ezcAuthenticationTokenOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationTokenOptions();
     }
 
     /**
@@ -126,7 +126,7 @@ class ezcAuthenticationTokenFilter extends ezcAuthenticationFilter
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -168,15 +168,10 @@ class ezcAuthenticationTokenFilter extends ezcAuthenticationFilter
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'token':
-            case 'function':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'token', 'function' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -188,15 +183,10 @@ class ezcAuthenticationTokenFilter extends ezcAuthenticationFilter
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'token':
-            case 'function':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'token', 'function' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**

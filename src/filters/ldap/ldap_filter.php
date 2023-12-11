@@ -93,22 +93,22 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
     /**
      * Username is not found in the database.
      */
-    const STATUS_USERNAME_INCORRECT = 1;
+    final public const STATUS_USERNAME_INCORRECT = 1;
 
     /**
      * Password is incorrect.
      */
-    const STATUS_PASSWORD_INCORRECT = 2;
+    final public const STATUS_PASSWORD_INCORRECT = 2;
 
     /**
      * Use plain-text password and no encryption for the connection (default).
      */
-    const PROTOCOL_PLAIN = 1;
+    final public const PROTOCOL_PLAIN = 1;
 
     /**
      * Use plain-text password and TLS connection.
      */
-    const PROTOCOL_TLS = 2;
+    final public const PROTOCOL_TLS = 2;
 
     /**
      * Holds the attributes which will be requested during the authentication
@@ -121,7 +121,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      *
      * @var array(string)
      */
-    protected $requestedData = array();
+    protected $requestedData = [];
 
     /**
      * Holds the extra data fetched during the authentication process.
@@ -136,14 +136,14 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      *
      * @var array(string=>mixed)
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Holds the properties of this class.
      *
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private array $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -161,7 +161,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
         }
 
         $this->ldap = $ldap;
-        $this->options = ( $options === null ) ? new ezcAuthenticationLdapOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationLdapOptions();
     }
 
     /**
@@ -175,7 +175,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -206,14 +206,10 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'ldap':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'ldap' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -225,14 +221,10 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'ldap':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'ldap' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**
@@ -304,7 +296,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
                     {
                         // ignore case of $attribute
                         if ( isset( $attributes[$attribute] )
-                             || isset( $attributes[strtolower( $attribute )] )
+                             || isset( $attributes[strtolower( (string) $attribute )] )
                            )
                         {
                             for ( $i = 0; $i < $attributes[$attribute]['count']; $i++ )
@@ -314,7 +306,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
                         }
 
                         // DN is a 'special' attribute and is not returned by ldap_get_attributes()
-                        if ( strtolower( $attribute ) == 'dn' )
+                        if ( strtolower( (string) $attribute ) == 'dn' )
                         {
                             // An entry can only have one DN
                             $this->data[$attribute] = $entryDN;
@@ -365,7 +357,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      * @param mixed $connection An established LDAP connection
      * @return bool
      */
-    protected function ldapStartTls( $connection )
+    protected function ldapStartTls( mixed $connection )
     {
         return @ldap_start_tls( $connection );
     }
@@ -380,7 +372,7 @@ class ezcAuthenticationLdapFilter extends ezcAuthenticationFilter implements ezc
      *
      * @param array(string) $data A list of attributes to fetch during authentication
      */
-    public function registerFetchData( array $data = array() )
+    public function registerFetchData( array $data = [] )
     {
         $this->requestedData = $data;
     }

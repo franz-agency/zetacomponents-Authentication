@@ -92,17 +92,17 @@ class ezcAuthenticationSession
      *
      * This should be the same value as ezcAuthenticationFilter::STATUS_OK.
      */
-    const STATUS_OK = 0;
+    final public const STATUS_OK = 0;
 
     /**
      * The session is empty; normal behaviour is to continue with the other filters.
      */
-    const STATUS_EMPTY = 1;
+    final public const STATUS_EMPTY = 1;
 
     /**
      * The session expired; normal behaviour is to regenerate the session ID.
      */
-    const STATUS_EXPIRED = 2;
+    final public const STATUS_EXPIRED = 2;
 
     /**
      * Options for authentication filters.
@@ -118,7 +118,7 @@ class ezcAuthenticationSession
      */
     public function __construct( ezcAuthenticationSessionOptions $options = null )
     {
-        $this->options = ( $options === null ) ? new ezcAuthenticationSessionOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationSessionOptions();
     }
 
     /**
@@ -245,8 +245,7 @@ class ezcAuthenticationSession
      */
     public function load()
     {
-        return isset( $_SESSION[$this->options->idKey] ) ? $_SESSION[$this->options->idKey] :
-                                                                null;
+        return $_SESSION[$this->options->idKey] ?? null;
     }
 
     /**

@@ -87,7 +87,7 @@ class ezcAuthentication
      * 
      * @var array(ezcAuthenticationFilter)
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
      * Options for the Authentication object.
@@ -101,7 +101,7 @@ class ezcAuthentication
      * 
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private $properties = [];
 
     /**
      * Creates a new object of this class.
@@ -113,7 +113,7 @@ class ezcAuthentication
     {
         $this->credentials = $credentials;
         $this->status = new ezcAuthenticationStatus();
-        $this->options = ( $options === null ) ? new ezcAuthenticationOptions() : $options;
+        $this->options = $options ?? new ezcAuthenticationOptions();
     }
 
     /**
@@ -127,7 +127,7 @@ class ezcAuthentication
      * @param mixed $value The new value of the property
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -180,16 +180,10 @@ class ezcAuthentication
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'session':
-            case 'status':
-            case 'credentials':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'session', 'status', 'credentials' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -201,16 +195,10 @@ class ezcAuthentication
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'session':
-            case 'status':
-            case 'credentials':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'session', 'status', 'credentials' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**
@@ -247,7 +235,7 @@ class ezcAuthentication
         if ( isset( $this->session ) )
         {
             $code = $this->session->run( $credentials );
-            $this->status->append( get_class( $this->session ), $code );
+            $this->status->append( $this->session::class, $code );
         }
 
         if ( !isset( $this->session ) || $code === ezcAuthenticationSession::STATUS_EMPTY )
@@ -263,13 +251,15 @@ class ezcAuthentication
                     // status of the Authentication object
                     foreach ( $statuses as $status )
                     {
-                        list( $key, $value ) = each( $status );
+                        $key = key($status);
+                        $value = current($status);
+                        next($status);
                         $this->status->append( $key, $value );
                     }
                 }
                 else
                 {
-                    $this->status->append( get_class( $filter[0] ), $code );
+                    $this->status->append( $filter[0]::class, $code );
                 }
 
                 if ( ( $filter[1] === true && $code !== ezcAuthenticationFilter::STATUS_OK ) )
@@ -313,7 +303,7 @@ class ezcAuthentication
      */
     public function addFilter( ezcAuthenticationFilter $filter, $stop = false )
     {
-        $this->filters[] = array( $filter, $stop );
+        $this->filters[] = [$filter, $stop];
     }
 
     /**

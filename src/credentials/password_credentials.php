@@ -35,29 +35,24 @@
 class ezcAuthenticationPasswordCredentials extends ezcAuthenticationCredentials
 {
     /**
-     * Username or userID or url.
-     *
-     * @var string
-     */
-    public $id;
-
-    /**
-     * Password for the id.
-     *
-     * @var string
-     */
-    public $password;
-
-    /**
      * Constructs a new ezcAuthenticationPasswordCredentials object.
      *
      * @param string $id
      * @param string $password
      */
-    public function __construct( $id, $password )
+    public function __construct(
+        /**
+         * Username or userID or url.
+         *
+         */
+        public $id,
+        /**
+         * Password for the id.
+         *
+         */
+        public $password
+    )
     {
-        $this->id = $id;
-        $this->password = $password;
     }
 
     /**
@@ -85,7 +80,7 @@ class ezcAuthenticationPasswordCredentials extends ezcAuthenticationCredentials
      * 
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->id;
     }
